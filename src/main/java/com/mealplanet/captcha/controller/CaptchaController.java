@@ -33,7 +33,7 @@ public class CaptchaController {
 
   @GetMapping(path = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
   public byte[] getCaptchaById(@PathVariable UUID id) {
-    return captchaService.getCaptchImage(id);
+    return captchaService.getCaptchaImage(id);
   }
 
   @PostMapping("/validate/{id}")

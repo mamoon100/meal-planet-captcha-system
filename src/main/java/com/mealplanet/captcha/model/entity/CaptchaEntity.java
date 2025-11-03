@@ -31,6 +31,7 @@ public class CaptchaEntity {
   private String answer;
   private CaptchaTypeEnum type;
   private CaptchaStatusEnum status;
+  private boolean isExpired;
 
   @Override
   public final boolean equals(Object o) {

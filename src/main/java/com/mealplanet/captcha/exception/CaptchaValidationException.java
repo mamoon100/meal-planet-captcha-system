@@ -1,7 +1,7 @@
 package com.mealplanet.captcha.exception;
 
-public class CaptchaValidationException extends RuntimeException {
+public class CaptchaValidationException extends CaptchaSystemException {
   public CaptchaValidationException() {
-    super("Captcha is not in NEW status");
+    super("Captcha was validated");
   }
 }

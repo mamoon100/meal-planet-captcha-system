@@ -12,7 +12,8 @@ public class CaptchaMapper {
         entity.getFileName(),
         entity.getAnswer(),
         entity.getType(),
-        entity.getStatus()
+        entity.getStatus(),
+        entity.isExpired()
     );
   }
 
@@ -23,7 +24,8 @@ public class CaptchaMapper {
         dto.getFileName(),
         dto.getAnswer(),
         dto.getType(),
-        dto.getStatus()
+        dto.getStatus(),
+        dto.isExpired()
     );
   }
 }

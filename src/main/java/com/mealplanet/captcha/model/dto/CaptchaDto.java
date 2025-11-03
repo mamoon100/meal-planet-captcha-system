@@ -18,4 +18,5 @@ public class CaptchaDto {
   private String answer;
   private CaptchaTypeEnum type;
   private CaptchaStatusEnum status;
+  private boolean isExpired;
 }
