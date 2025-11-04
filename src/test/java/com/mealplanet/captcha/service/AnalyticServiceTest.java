@@ -39,7 +39,7 @@ class AnalyticServiceTest {
     void givenListThatHaveOneType_whenGetStatistic_thenReturnCorrectStatistic() {
         List<CaptchaDto> captchaDtoList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID);
+            CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID);
             captchaDtoList.add(captchaDto);
         }
         when(captchaRepo.findCaptchaByStatusIn(captchaStatusFilter))
@@ -55,10 +55,10 @@ class AnalyticServiceTest {
     void givenListThatHaveTwoType_whenGetStatistic_thenReturnCorrectStatistic() {
         List<CaptchaDto> captchaDtoList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            CaptchaDto invalidImageCaptcha = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.INVALID);
-            CaptchaDto validImageCaptcha = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID);
-            CaptchaDto invalidMathCaptcha = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.MATH, CaptchaStatusEnum.INVALID);
-            CaptchaDto validMathCaptcha = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.MATH, CaptchaStatusEnum.VALID);
+            CaptchaDto invalidImageCaptcha = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.INVALID);
+            CaptchaDto validImageCaptcha = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID);
+            CaptchaDto invalidMathCaptcha = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.MATH, CaptchaStatusEnum.INVALID);
+            CaptchaDto validMathCaptcha = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.MATH, CaptchaStatusEnum.VALID);
             captchaDtoList.add(invalidMathCaptcha);
             captchaDtoList.add(validMathCaptcha);
             captchaDtoList.add(validImageCaptcha);

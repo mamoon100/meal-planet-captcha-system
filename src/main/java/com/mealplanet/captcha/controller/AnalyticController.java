@@ -17,7 +17,7 @@ public class AnalyticController {
     }
 
     @GetMapping
-    public AnalyticResponse getCaptcha() {
+    public AnalyticResponse getStatistic() {
         return analyticService.getStatistic();
     }
 }

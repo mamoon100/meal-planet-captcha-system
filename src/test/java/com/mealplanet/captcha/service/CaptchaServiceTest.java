@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -105,7 +104,7 @@ class CaptchaServiceTest {
     void givenNotNewCaptchaUUID_whenGetCaptchaImage_thenThrowCaptchaValidationException() {
         UUID invaludUUID = UUID.randomUUID();
         Mockito.when(captchaRepo.findById(invaludUUID)).thenReturn(
-                Optional.of(CaptchaMapper.toEntity(CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID)))
+                Optional.of(CaptchaGenerationTestUtil.generateCaptchaEntity(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.VALID))
         );
         assertThrows(CaptchaValidationException.class,
                 () -> captchaService.getCaptchaImage(invaludUUID)
@@ -115,7 +114,7 @@ class CaptchaServiceTest {
     @Test
     void givenExpiredCaptchaUUID_whenGetCaptchaImage_thenThrowCaptchaExpiredException() {
         UUID expiredCaptchaId = UUID.randomUUID();
-        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
+        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
         captchaDto.setExpiresAt(LocalDateTime.now().minusSeconds(captchaExpirationSeconds));
         Mockito.when(captchaRepo.findById(expiredCaptchaId)).thenReturn(
                 Optional.of(CaptchaMapper.toEntity(captchaDto))
@@ -129,7 +128,7 @@ class CaptchaServiceTest {
     @Test
     void givenValidNewUUID_whenGetCaptchaImage_thenReturnImageBytes() {
         CaptchaResponse captchaResponse = captchaService.generateCaptcha(CaptchaTypeEnum.IMAGE);
-        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
+        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
         String fileName = OUTPUT + File.separator + getFileName();
         captchaDto.setId(captchaResponse.id());
         captchaDto.setFileName(fileName);
@@ -143,7 +142,7 @@ class CaptchaServiceTest {
     @Test
     void givenValidNewUUIDWithInvalidFileNamePath_whenGetCaptchaImage_thenThrowGeneralErrorException() {
         CaptchaResponse captchaResponse = captchaService.generateCaptcha(CaptchaTypeEnum.IMAGE);
-        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptcha(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
+        CaptchaDto captchaDto = CaptchaGenerationTestUtil.generateCaptchaDto(CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.NEW);
         captchaDto.setId(captchaResponse.id());
         Mockito.when(captchaRepo.findById(captchaResponse.id())).thenReturn(
                 Optional.of(CaptchaMapper.toEntity(captchaDto))
@@ -163,9 +162,9 @@ class CaptchaServiceTest {
     @Test
     void givenAlreadyAnsweredCaptchaId_whenValidateCaptcha_thenThrowCaptchaValidationException() {
         UUID invaludUUID = UUID.randomUUID();
-        Mockito.when(captchaRepo.findById(invaludUUID)).thenReturn(Optional.of(CaptchaMapper.toEntity(CaptchaGenerationTestUtil.generateCaptcha(
+        Mockito.when(captchaRepo.findById(invaludUUID)).thenReturn(Optional.of(CaptchaGenerationTestUtil.generateCaptchaEntity(
                 CaptchaTypeEnum.IMAGE, CaptchaStatusEnum.INVALID
-        ))));
+        )));
         assertThrows(CaptchaValidationException.class,
                 () -> captchaService.validateCaptcha(invaludUUID, new CaptchaValidationRequest("test"))
         );
@@ -174,7 +173,7 @@ class CaptchaServiceTest {
     @Test
     void givenExpiredCaptchaId_whenValidateCaptcha_thenThrowCaptchaExpiredException() {
         UUID invaludUUID = UUID.randomUUID();
-        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptcha(
+        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptchaDto(
                 CaptchaTypeEnum.MATH, CaptchaStatusEnum.NEW
         );
         dto.setExpiresAt(LocalDateTime.now().minusSeconds(captchaExpirationSeconds));
@@ -187,7 +186,7 @@ class CaptchaServiceTest {
     @Test
     void givenWrongAnswer_whenValidateCaptcha_thenReturnFalse() {
         UUID invaludUUID = UUID.randomUUID();
-        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptcha(
+        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptchaDto(
                 CaptchaTypeEnum.MATH, CaptchaStatusEnum.NEW
         );
         Mockito.when(captchaRepo.findById(invaludUUID)).thenReturn(Optional.of(CaptchaMapper.toEntity(dto)));
@@ -197,7 +196,7 @@ class CaptchaServiceTest {
     @Test
     void givenCorrectAnswer_whenValidateCaptcha_thenReturnTrue() {
         UUID invaludUUID = UUID.randomUUID();
-        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptcha(
+        CaptchaDto dto = CaptchaGenerationTestUtil.generateCaptchaDto(
                 CaptchaTypeEnum.MATH, CaptchaStatusEnum.NEW
         );
         Mockito.when(captchaRepo.findById(invaludUUID)).thenReturn(Optional.of(CaptchaMapper.toEntity(dto)));
