@@ -65,7 +65,7 @@ class CaptchaExpirationSchedulerTest {
             File file = new File(OUTPUT + File.separator + captchaEntity.getFileName());
             assert (!file.exists());
         });
-        Mockito.verify(captchaRepo, Mockito.times(10)).save(any());
+        Mockito.verify(captchaRepo, Mockito.times(1)).saveAll(any());
 
     }
 

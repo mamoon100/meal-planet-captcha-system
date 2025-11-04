@@ -6,7 +6,9 @@ import com.mealplanet.captcha.model.response.CaptchaResponse;
 import com.mealplanet.captcha.model.response.CaptchaValidationResponse;
 import com.mealplanet.captcha.service.CaptchaService;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,19 +27,19 @@ public class CaptchaController {
     }
 
     @PostMapping("/generate")
-    public CaptchaResponse generateCaptcha(@RequestParam CaptchaTypeEnum type) {
+    public ResponseEntity<CaptchaResponse> generateCaptcha(@RequestParam CaptchaTypeEnum type) {
         CaptchaResponse captchaResponse = captchaService.generateCaptcha(type);
         meterRegistry.counter("captcha.generated.count").increment();
-        return captchaResponse;
+        return new ResponseEntity<>(captchaResponse, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] getCaptchaById(@PathVariable UUID id) {
-        return captchaService.getCaptchaImage(id);
+    public ResponseEntity<byte[]> getCaptchaById(@PathVariable UUID id) {
+        return ResponseEntity.ok(captchaService.getCaptchaImage(id));
     }
 
     @PostMapping("/validate/{id}")
-    public CaptchaValidationResponse validateCaptcha(@PathVariable UUID id, @RequestBody CaptchaValidationRequest captcha) {
+    public ResponseEntity<CaptchaValidationResponse> validateCaptcha(@PathVariable UUID id, @RequestBody CaptchaValidationRequest captcha) {
         meterRegistry.counter("captcha.verification.count").increment();
         CaptchaValidationResponse captchaValidationResponse = captchaService.validateCaptcha(id, captcha);
         if (captchaValidationResponse.valid()) {
@@ -45,7 +47,7 @@ public class CaptchaController {
         } else {
             meterRegistry.counter("captcha.invalid.count").increment();
         }
-        return captchaValidationResponse;
+        return ResponseEntity.ok(captchaValidationResponse);
     }
 
 

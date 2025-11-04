@@ -2,6 +2,7 @@ package com.mealplanet.captcha.controller;
 
 import com.mealplanet.captcha.model.response.AnalyticResponse;
 import com.mealplanet.captcha.service.AnalyticService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,7 @@ public class AnalyticController {
     }
 
     @GetMapping
-    public AnalyticResponse getStatistic() {
-        return analyticService.getStatistic();
+    public ResponseEntity<AnalyticResponse> getStatistic() {
+        return ResponseEntity.ok(analyticService.getStatistic());
     }
 }
