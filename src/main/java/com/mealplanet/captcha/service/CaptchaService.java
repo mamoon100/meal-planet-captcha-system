@@ -31,7 +31,7 @@ import java.util.UUID;
 public class CaptchaService {
 
 
-    private static final int TIME_CORRECTNESS_VALUE = 1;
+    private final int TIME_CORRECTNESS_VALUE = 1;
     private final CaptchaRepo captchaRepo;
     private final int captchaExpirationSeconds;
 
