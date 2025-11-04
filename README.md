@@ -18,7 +18,7 @@ Default application configuration is in `src/main/resources/application.properti
 
 Tests use an isolated in‑memory H2 DB via `src/test/resources/application-test.properties` and the `test` Spring profile.
 
-### Run locally (dev)
+### Run locally
 ``` BASH
 ./mvnw spring-boot:run
 ```
@@ -145,12 +145,9 @@ curl -s "http://localhost:8080/api/v1/analytic" | jq
   - Introduce Redis for ephemeral storage and distributed rate limiting.
   - Horizontal scaling docs/sample manifests (Dockerfile, K8s manifests).
   - Observability: metrics (Micrometer/Prometheus), structured logs, tracing.
-- API & DX
+- API
   - Swagger documentation.
   - More analytics (per time window, per client, response times).
-  - Idempotency keys for generate endpoint.
-- Testing
-  - Add contract tests and performance tests; test coverage badges in CI.
 - Configuration
   - Externalize `captcha/output` path and make retention configurable; feature flags for types.
 
