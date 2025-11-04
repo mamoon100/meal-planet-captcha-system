@@ -1,7 +1,7 @@
 package com.mealplanet.captcha.exception;
 
 public class CaptchaValidationException extends CaptchaSystemException {
-  public CaptchaValidationException() {
-    super("Captcha was validated");
-  }
+    public CaptchaValidationException() {
+        super("Captcha was validated");
+    }
 }
