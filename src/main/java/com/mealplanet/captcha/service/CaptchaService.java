@@ -57,6 +57,7 @@ public class CaptchaService {
     }
 
     public byte[] getCaptchaImage(UUID id) {
+        log.info("Getting captcha image with id {}", id);
         try {
             CaptchaDto captchaDto = captchaRepo.findById(id).map(CaptchaMapper::toDto).orElseThrow(CaptchaNotFoundException::new);
             validateStatusAndExpiration(captchaDto);
@@ -68,19 +69,24 @@ public class CaptchaService {
     }
 
     public CaptchaValidationResponse validateCaptcha(UUID id, CaptchaValidationRequest captcha) {
+        log.info("Validating captcha with id {}", id);
         CaptchaDto captchaDto = captchaRepo.findById(id).map(CaptchaMapper::toDto).orElseThrow(CaptchaNotFoundException::new);
         validateStatusAndExpiration(captchaDto);
         boolean isValid = captchaDto.getAnswer().equals(HashingUtil.hashSHA256(captcha.answer()));
         captchaDto.setStatus(isValid ? CaptchaStatusEnum.VALID : CaptchaStatusEnum.INVALID);
         captchaRepo.save(CaptchaMapper.toEntity(captchaDto));
+        log.info("Captcha validation result: {}", isValid);
         return new CaptchaValidationResponse(isValid);
     }
 
     private void validateStatusAndExpiration(CaptchaDto captchaDto) {
+        log.info("Validating captcha status and expiration for id {}", captchaDto.getId());
         if (!captchaDto.getStatus().equals(CaptchaStatusEnum.NEW)) {
+            log.info("Captcha with id {} has invalid status {}", captchaDto.getId(), captchaDto.getStatus());
             throw new CaptchaValidationException();
         }
         if (captchaDto.getExpiresAt().isBefore(LocalDateTime.now())) {
+            log.info("Captcha with id {} has expired", captchaDto.getId());
             captchaDto.setExpired(true);
             captchaRepo.save(CaptchaMapper.toEntity(captchaDto));
             throw new CaptchaExpiredException();
@@ -89,16 +95,19 @@ public class CaptchaService {
 
 
     private CaptchaResponse generateImageCaptcha() throws IOException {
+        log.info("Generating image captcha");
         String randomString = ExpressionGenerationUtil.generateRandomString(5);
         return generateAndStoreCaptcha(randomString, randomString, CaptchaTypeEnum.IMAGE);
     }
 
     private CaptchaResponse generateMathCaptcha() throws IOException {
+        log.info("Generating math captcha");
         MathExpressionDto mathExpressionDto = ExpressionGenerationUtil.generateMathExpression();
         return generateAndStoreCaptcha(mathExpressionDto.mathExpression(), String.valueOf(mathExpressionDto.answer()), CaptchaTypeEnum.MATH);
     }
 
     private CaptchaResponse generateAndStoreCaptcha(String captchaExpression, String answer, CaptchaTypeEnum captchaType) throws IOException {
+        log.info("Generating and storing captcha of type {}", captchaType);
         UUID uuid = UUID.randomUUID();
         File file = ImageGenerationUtil.generateAndSaveImage(uuid.toString(), captchaExpression, "captcha/output");
         CaptchaEntity entity = generateCaptchaEntity(
@@ -116,6 +125,7 @@ public class CaptchaService {
             String answer,
             CaptchaTypeEnum captchaTypeEnum
     ) {
+        log.info("Generating captcha entity with id {}", uuid);
         CaptchaEntity captchaEntity = new CaptchaEntity();
         captchaEntity.setId(uuid);
         captchaEntity.setExpiresAt(LocalDateTime.now().plusSeconds(captchaExpirationSeconds + TIME_CORRECTNESS_VALUE));
