@@ -7,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,21 +26,19 @@ public class CaptchaExpirationScheduler {
         this.captchaRepo = captchaRepo;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 * * * * *") // every minute
+    @Transactional
     public void cleanupExpiredCaptchaFiles() {
-        List<CaptchaEntity> captchaByExpiresAtBefore = captchaRepo.findCaptchaByExpiresAtBeforeAndFileNameNotNull(LocalDateTime.now());
-        captchaByExpiresAtBefore.forEach(captcha -> {
-            File file = new File(captcha.getFileName());
-            if (file.exists()) {
-                boolean deleted = file.delete();
-                if (deleted) {
-                    captcha.setFileName(null);
-                    captcha.setExpired(true);
-                    captchaRepo.save(captcha);
-                } else {
-                    log.warn("Could not delete the file {}", captcha.getFileName());
-                }
+        List<CaptchaEntity> expired = captchaRepo.findCaptchaByExpiresAtBeforeAndFileNameNotNull(LocalDateTime.now());
+        for (CaptchaEntity captchaEntity : expired) {
+            try {
+                Files.deleteIfExists(Paths.get(captchaEntity.getFileName()));
+                captchaEntity.setFileName(null);
+                captchaEntity.setExpired(true);
+            } catch (IOException e) {
+                log.warn("Could not delete file {} for captcha {}", captchaEntity.getFileName(), captchaEntity.getId(), e);
             }
-        });
+        }
+        captchaRepo.saveAll(expired);
     }
 }
