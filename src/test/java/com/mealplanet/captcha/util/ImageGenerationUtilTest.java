@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -33,14 +34,14 @@ class ImageGenerationUtilTest {
 
     @Test
     void whenGenerateImage_thenReturnValidImage() throws IOException {
-        File imageBytes = ImageGenerationUtil.generateAndSaveImage("test", OUTPUT);
+        File imageBytes = ImageGenerationUtil.generateAndSaveImage(UUID.randomUUID().toString(), "test", OUTPUT);
         assertNotNull(imageBytes);
     }
 
     @Test
     void givenNonExistenceOutputFolderWhenGenerateAndSaveImage_thenCreateFolderAndSaveImageThere() throws IOException {
         String nonExistingFolder = OUTPUT + "/nonExistingFolder/" + System.currentTimeMillis();
-        File imageBytes = ImageGenerationUtil.generateAndSaveImage("test", nonExistingFolder);
+        File imageBytes = ImageGenerationUtil.generateAndSaveImage(UUID.randomUUID().toString(), "test", nonExistingFolder);
         assertNotNull(imageBytes);
         truncateOutputFolder(nonExistingFolder);
     }

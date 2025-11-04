@@ -24,7 +24,7 @@ public class CaptchaExpirationScheduler {
     }
 
     @Scheduled(cron = "0 * * * * *")
-    public void checkCaptchaExpiration() {
+    public void cleanupExpiredCaptchaFiles() {
         List<CaptchaEntity> captchaByExpiresAtBefore = captchaRepo.findCaptchaByExpiresAtBeforeAndFileNameNotNull(LocalDateTime.now());
         captchaByExpiresAtBefore.forEach(captcha -> {
             File file = new File(captcha.getFileName());

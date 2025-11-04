@@ -12,7 +12,7 @@ public class ImageGenerationUtil {
     private static final int WIDTH = 150;
     private static final int HEIGHT = 50;
 
-    public static File generateAndSaveImage(String text, String outputDir) throws IOException {
+    public static File generateAndSaveImage(String uuid, String text, String outputDir) throws IOException {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
         g2d.setColor(Color.WHITE);
@@ -30,7 +30,7 @@ public class ImageGenerationUtil {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        File outputFile = new File(outputDir, System.currentTimeMillis() + ".png");
+        File outputFile = new File(outputDir, uuid + "-" + System.currentTimeMillis() + ".png");
         ImageIO.write(image, "png", outputFile);
         return outputFile;
     }

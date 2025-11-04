@@ -99,8 +99,10 @@ public class CaptchaService {
     }
 
     private CaptchaResponse generateAndStoreCaptcha(String captchaExpression, String answer, CaptchaTypeEnum captchaType) throws IOException {
-        File file = ImageGenerationUtil.generateAndSaveImage(captchaExpression, "captcha/output");
+        UUID uuid = UUID.randomUUID();
+        File file = ImageGenerationUtil.generateAndSaveImage(uuid.toString(), captchaExpression, "captcha/output");
         CaptchaEntity entity = generateCaptchaEntity(
+                uuid,
                 file.getPath(),
                 answer,
                 captchaType
@@ -110,12 +112,12 @@ public class CaptchaService {
     }
 
     private CaptchaEntity generateCaptchaEntity(
-            String fileName,
+            UUID uuid, String fileName,
             String answer,
             CaptchaTypeEnum captchaTypeEnum
     ) {
         CaptchaEntity captchaEntity = new CaptchaEntity();
-        captchaEntity.setId(UUID.randomUUID());
+        captchaEntity.setId(uuid);
         captchaEntity.setExpiresAt(LocalDateTime.now().plusSeconds(captchaExpirationSeconds + TIME_CORRECTNESS_VALUE));
         captchaEntity.setFileName(fileName);
         captchaEntity.setAnswer(HashingUtil.hashSHA256(answer));
